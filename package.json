@@ -1,0 +1,33 @@
+{
+  "name": "devtinder-backend",
+  "version": "1.0.0",
+  "description": "made by developer for developers",
+  "keywords": [
+    "node",
+    "js",
+    "javascript",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "\"Prathmesh Shinde\"",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.1",
+    "validator": "^13.15.15"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  }
+}
