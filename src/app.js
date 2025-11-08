@@ -1,4 +1,4 @@
-
+require('dotenv').config(); //to use environment variables from .env file
 const express = require('express');
 const connectDB = require('./config/database');
 const cors = require('cors');
@@ -34,12 +34,12 @@ app.use('/', userRouter);
 
 //connecting to database
 
-
+const PORT = process.env.PORT || 7000;
 
 connectDB()
     .then(() => {
         console.log("Database connected successfully");
-        app.listen(7000, () => {
+        app.listen(PORT, () => {
             console.log("Server is running on port 7000");
 
         })
