@@ -4,6 +4,8 @@ const connectDB = require('./config/database');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
+const http = require('http');
+const initializeSocket = require('./utils/socket');
 
 //initializing express app
 const app = express();
@@ -25,6 +27,7 @@ const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request');
 const userRouter = require('./routes/user');
 const paymentRouter = require('./routes/payment');
+const { init } = require('./models/user');
 
 //using routes
 
@@ -34,6 +37,14 @@ app.use('/', requestRouter);
 app.use('/', userRouter);
 app.use('/', paymentRouter);
 
+
+//creating http server
+const server = http.createServer(app);
+
+//initializing socket
+initializeSocket(server);
+
+
 //connecting to database
 
 const PORT = process.env.PORT || 7000;
@@ -41,7 +52,7 @@ const PORT = process.env.PORT || 7000;
 connectDB()
     .then(() => {
         console.log("Database connected successfully");
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log("Server is running on port 7000");
 
         })
