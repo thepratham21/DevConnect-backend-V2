@@ -13,7 +13,7 @@ const app = express();
 app.use(cors({
     origin: [
     "http://localhost:5173",
-    "https://your-frontend-domain.onrender.com"
+    "https://devconnect-backend-v2.onrender.com"
 ],
     credentials: true,
 
