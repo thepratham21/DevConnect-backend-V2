@@ -11,7 +11,10 @@ const initializeSocket = require('./utils/socket');
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173", 
+    origin: [
+    "http://localhost:5173",
+    "https://your-frontend-domain.onrender.com"
+],
     credentials: true,
 
 }
@@ -57,7 +60,8 @@ connectDB()
     .then(() => {
         console.log("Database connected successfully");
         server.listen(PORT, () => {
-            console.log("Server is running on port 7000");
+            console.log(`Server is running on port ${PORT}`);
+
 
         })
     })
