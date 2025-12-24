@@ -72,4 +72,44 @@ profileRouter.put('/profile/password', userAuth, async (req,res) => {
     }
 })
 
+// Add this endpoint to profile.js for public profile viewing:
+
+profileRouter.get('/profile/view/:userId', userAuth, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        
+        // Find user by ID
+        const user = await User.findById(userId)
+            .select('firstName lastName email photoUrl age gender about skills title location github linkedin website');
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+
+        // Return user profile (public info only)
+        res.json({
+            success: true,
+            user: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                photoUrl: user.photoUrl,
+                age: user.age,
+                gender: user.gender,
+                about: user.about,
+                skills: user.skills || [],
+                
+            }
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Error: " + err.message
+        });
+    } 
+});
+
 module.exports = profileRouter;

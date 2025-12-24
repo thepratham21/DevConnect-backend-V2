@@ -11,10 +11,10 @@ const initializeSocket = require('./utils/socket');
 const app = express();
 
 app.use(cors({
-    origin: [
+    origin: 
     "http://localhost:5173",
-    "https://devconnect-backend-v2.onrender.com"
-],
+    
+
     credentials: true,
 
 }
@@ -31,6 +31,9 @@ const requestRouter = require('./routes/request');
 const userRouter = require('./routes/user');
 const paymentRouter = require('./routes/payment');
 const chatRouter = require('./routes/chat');
+const postRouter = require('./routes/post');
+const likeRouter = require('./routes/like');
+const commentRouter = require('./routes/comment');
 
 const { init } = require('./models/user');
 
@@ -42,6 +45,9 @@ app.use('/', requestRouter);
 app.use('/', userRouter);
 app.use('/', paymentRouter);
 app.use('/', chatRouter);
+app.use('/', postRouter);
+app.use('/', likeRouter);
+app.use('/', commentRouter);
 
 
 
