@@ -43,7 +43,7 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
     const { content } = req.body;
 
     try {
-        // Find parent comment
+        
         const parentComment = await Comment.findById(commentId);
         
         if (!parentComment) {
@@ -53,7 +53,7 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
             });
         }
 
-        // Create reply
+        
         const reply = await Comment.create({
             postId: parentComment.postId,
             userId,
@@ -63,7 +63,7 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
             depth: parentComment.depth + 1
         });
 
-        // Populate user data
+        
         const populatedReply = await Comment.findById(reply._id)
             .populate("userId", "firstName lastName email photoUrl")
             .populate({
@@ -87,7 +87,7 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
     }
 });
 
-// Get comments for a post (with nested replies)
+// Get comments for a post
 commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
     try {
         // Get all comments for this post
@@ -107,7 +107,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
         const commentMap = {};
         const rootComments = [];
 
-        // First pass: create map and identify root comments
+        // create map and identify root comments
         comments.forEach(comment => {
             // Convert to plain object
             const commentObj = comment.toObject();
@@ -119,7 +119,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
             }
         });
 
-        // Second pass: build nested structure
+        // Build nested structure
         comments.forEach(comment => {
             if (comment.parentComment) {
                 const parentId = comment.parentComment._id ? comment.parentComment._id.toString() : comment.parentComment.toString();
@@ -129,7 +129,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
             }
         });
 
-        // Sort replies by creation date (oldest first)
+        // Sort replies by creation date
         Object.keys(commentMap).forEach(commentId => {
             if (commentMap[commentId].replies.length > 0) {
                 commentMap[commentId].replies.sort((a, b) => 
@@ -138,7 +138,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
             }
         });
 
-        // Sort root comments by creation date (newest first)
+        // Sort root comments by creation date
         rootComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         return res.json({
@@ -155,7 +155,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
     }
 });
 
-// Delete comment
+
 commentRouter.delete("/delete/:commentId", userAuth, async (req, res) => {
     const { commentId } = req.params;
 
@@ -176,7 +176,7 @@ commentRouter.delete("/delete/:commentId", userAuth, async (req, res) => {
             });
         }
 
-        // Also delete all replies to this comment
+        
         await Comment.deleteMany({ parentComment: commentId });
         
         await comment.deleteOne();

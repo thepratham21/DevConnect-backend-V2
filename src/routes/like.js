@@ -7,9 +7,7 @@ const { userAuth } = require('../middlewares/auth');
 
 const likeRouter = express.Router();
 
-/**
- * TOGGLE LIKE / UNLIKE
- */
+// Like or unlike a post
 likeRouter.post("/likes/:postId", userAuth, async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;

@@ -11,10 +11,10 @@ profileRouter.get('/profile/view', userAuth, async (req, res) => {
 
     try {
 
-        //get user from req object    
+        
         const user = req.user;
 
-        //send user profile data as response
+        
         res.send(user);
     }
     catch (err) {
@@ -72,13 +72,13 @@ profileRouter.put('/profile/password', userAuth, async (req,res) => {
     }
 })
 
-// Add this endpoint to profile.js for public profile viewing:
+
 
 profileRouter.get('/profile/view/:userId', userAuth, async (req, res) => {
     try {
         const userId = req.params.userId;
         
-        // Find user by ID
+        
         const user = await User.findById(userId)
             .select('firstName lastName email photoUrl age gender about skills title location github linkedin website');
         
@@ -89,7 +89,7 @@ profileRouter.get('/profile/view/:userId', userAuth, async (req, res) => {
             });
         }
 
-        // Return user profile (public info only)
+        
         res.json({
             success: true,
             user: {
