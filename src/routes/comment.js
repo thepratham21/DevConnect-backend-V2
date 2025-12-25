@@ -1,16 +1,28 @@
+
 const express = require("express");
 const Comment = require("../models/comment");
+const Post = require("../models/post"); 
 const { userAuth } = require('../middlewares/auth');
 
 const commentRouter = express.Router();
 
-// Create top-level comment
+
 commentRouter.post("/createComment/:postId", userAuth, async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
     const { content } = req.body;
 
     try {
+        
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
+
+        
         const comment = await Comment.create({
             postId,
             userId,
@@ -20,15 +32,23 @@ commentRouter.post("/createComment/:postId", userAuth, async (req, res) => {
             depth: 0
         });
 
-        // Populate user data
+        
+        await Post.findByIdAndUpdate(postId, { $inc: { commentsCount: 1 } });
+
+        
+        const updatedPost = await Post.findById(postId);
+        
+        
         const populatedComment = await Comment.findById(comment._id)
             .populate("userId", "firstName lastName email photoUrl");
 
         return res.status(201).json({
             success: true,
             comment: populatedComment,
+            commentsCount: updatedPost.commentsCount
         });
     } catch (error) {
+        console.error("Create comment error:", error);
         return res.status(500).json({
             success: false,
             message: "Failed to add comment",
@@ -36,7 +56,7 @@ commentRouter.post("/createComment/:postId", userAuth, async (req, res) => {
     }
 });
 
-// Create reply to a comment
+
 commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
     const { commentId } = req.params;
     const userId = req.user._id;
@@ -54,6 +74,9 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
         }
 
         
+        await Post.findByIdAndUpdate(parentComment.postId, { $inc: { commentsCount: 1 } });
+
+        
         const reply = await Comment.create({
             postId: parentComment.postId,
             userId,
@@ -64,6 +87,9 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
         });
 
         
+        const updatedPost = await Post.findById(parentComment.postId);
+        
+
         const populatedReply = await Comment.findById(reply._id)
             .populate("userId", "firstName lastName email photoUrl")
             .populate({
@@ -78,8 +104,10 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
         return res.status(201).json({
             success: true,
             comment: populatedReply,
+            commentsCount: updatedPost.commentsCount
         });
     } catch (error) {
+        console.error("Reply error:", error);
         return res.status(500).json({
             success: false,
             message: "Failed to add reply",
@@ -87,10 +115,10 @@ commentRouter.post("/reply/:commentId", userAuth, async (req, res) => {
     }
 });
 
-// Get comments for a post
+
 commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
     try {
-        // Get all comments for this post
+        
         const comments = await Comment.find({ postId: req.params.postId })
             .populate("userId", "firstName lastName email photoUrl")
             .populate({
@@ -103,13 +131,13 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
             })
             .sort({ createdAt: 1 });
 
-        // Create a map for quick lookup
+        
         const commentMap = {};
         const rootComments = [];
 
-        // create map and identify root comments
+        
         comments.forEach(comment => {
-            // Convert to plain object
+            
             const commentObj = comment.toObject();
             commentObj.replies = [];
             commentMap[comment._id] = commentObj;
@@ -118,8 +146,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
                 rootComments.push(commentMap[comment._id]);
             }
         });
-
-        // Build nested structure
+        
         comments.forEach(comment => {
             if (comment.parentComment) {
                 const parentId = comment.parentComment._id ? comment.parentComment._id.toString() : comment.parentComment.toString();
@@ -144,7 +171,7 @@ commentRouter.get("/comments/:postId", userAuth, async (req, res) => {
         return res.json({
             success: true,
             comments: rootComments,
-            allComments: comments // Keep flat for backward compatibility
+            allComments: comments 
         });
     } catch (error) {
         console.error("Error fetching comments:", error);
@@ -177,8 +204,8 @@ commentRouter.delete("/delete/:commentId", userAuth, async (req, res) => {
         }
 
         
+        await Post.findByIdAndUpdate(comment.postId, { $inc: { commentsCount: -1 } });
         await Comment.deleteMany({ parentComment: commentId });
-        
         await comment.deleteOne();
 
         return res.json({
@@ -186,6 +213,7 @@ commentRouter.delete("/delete/:commentId", userAuth, async (req, res) => {
             message: "Comment deleted successfully",
         });
     } catch (error) {
+        console.error("Delete comment error:", error);
         return res.status(500).json({
             success: false,
             message: "Failed to delete comment",

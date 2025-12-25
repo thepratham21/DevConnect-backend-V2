@@ -34,6 +34,7 @@ const chatRouter = require('./routes/chat');
 const postRouter = require('./routes/post');
 const likeRouter = require('./routes/like');
 const commentRouter = require('./routes/comment');
+const imageRouter = require('./routes/image');
 
 const { init } = require('./models/user');
 
@@ -48,6 +49,7 @@ app.use('/', chatRouter);
 app.use('/', postRouter);
 app.use('/', likeRouter);
 app.use('/', commentRouter);
+app.use('/', imageRouter);
 
 
 
