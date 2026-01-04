@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const http = require('http');
 const initializeSocket = require('./utils/socket');
 
+
 //initializing express app
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(cors({
 ));
 app.use(express.json()); //middleware that parses incoming JSON requests
 app.use(cookieParser()); //middleware to parse cookies
+app.use(express.urlencoded({ extended: true })); //middleware to parse URL-encoded data
 
 //importing routes - auth, profile, request.
 const authRouter = require('./routes/auth');

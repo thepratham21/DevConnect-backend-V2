@@ -1,45 +1,64 @@
-// socket.js
-const socketIO = require("socket.io");
+const socket = require("socket.io");
 const crypto = require("crypto");
+const { Chat } = require("../models/chat");
+const ConnectionRequest = require("../models/connectionRequest");
 
-//Function to generate a unique room ID for two users - Encrypted using SHA256
 const getSecretRoomId = (userId, targetUserId) => {
     return crypto
-        .createHash('sha256')
-        .update([userId, targetUserId].sort().join("_"))
-        .digest('hex');
-}
+        .createHash("sha256")
+        .update([userId, targetUserId].sort().join("$"))
+        .digest("hex");
+};
 
 const initializeSocket = (server) => {
-
-    const io = socketIO(server, {
+    const io = socket(server, {
         cors: {
             origin: "http://localhost:5173",
-            credentials: true,
-        }
+        },
     });
 
     io.on("connection", (socket) => {
-        console.log("Client connected:", socket.id);
-
-        // JOIN ROOM
-        socket.on("joinChat", ({ userId, targetUserId }) => {
+        socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
             const roomId = getSecretRoomId(userId, targetUserId);
+            console.log(firstName + " joined Room : " + roomId);
             socket.join(roomId);
-            console.log(`User ${userId} joined room: ${roomId}`);
         });
 
-        // RECEIVE MESSAGE FROM CLIENT
-        socket.on("sendMessage", (msg) => {
-            const roomId = [msg.senderId, msg.receiverId].sort().join("_");
+        socket.on(
+            "sendMessage",
+            async ({ firstName, lastName, userId, targetUserId, text }) => {
+                // Save messages to the database
+                try {
+                    const roomId = getSecretRoomId(userId, targetUserId);
+                    console.log(firstName + " " + text);
 
-            // Send to all clients in room
-            io.to(roomId).emit("receiveMessage", msg);
-        });
+                    // TODO: Check if userId & targetUserId are friends
 
-        socket.on("disconnect", () => {
-            console.log("Client disconnected:", socket.id);
-        });
+                    let chat = await Chat.findOne({
+                        participants: { $all: [userId, targetUserId] },
+                    });
+
+                    if (!chat) {
+                        chat = new Chat({
+                            participants: [userId, targetUserId],
+                            messages: [],
+                        });
+                    }
+
+                    chat.messages.push({
+                        senderId: userId,
+                        text,
+                    });
+
+                    await chat.save();
+                    io.to(roomId).emit("messageReceived", { firstName, lastName, text });
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        );
+
+        socket.on("disconnect", () => { });
     });
 };
 
