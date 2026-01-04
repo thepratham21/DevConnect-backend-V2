@@ -1,5 +1,5 @@
 {
-  "name": "DevConnect-backend",
+  "name": "devconnect-backend",
   "version": "1.0.0",
   "description": "made by developer for developers",
   "keywords": [
@@ -11,7 +11,7 @@
   "license": "ISC",
   "author": "\"Prathmesh Shinde\"",
   "type": "commonjs",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
