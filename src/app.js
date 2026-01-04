@@ -12,17 +12,18 @@ const initializeSocket = require('./utils/socket');
 const app = express();
 
 app.use(cors({
-    origin: 
-    "http://localhost:5173",
-    
-    
-
+    origin: [
+        "http://localhost:5173",                     
+        "https://dev-connect-frontend-seven.vercel.app/",    // Your Vercel URL
+        "https://devconnect-backend-v2.onrender.com" //Render backend URL
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-}
 
 
-));
 app.use(express.json()); //middleware that parses incoming JSON requests
 app.use(cookieParser()); //middleware to parse cookies
 app.use(express.urlencoded({ extended: true })); //middleware to parse URL-encoded data

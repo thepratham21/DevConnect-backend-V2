@@ -9,7 +9,7 @@ chatRouter.get("/chat/:targetUserId", userAuth, async (req, res) => {
     const { targetUserId } = req.params;
     const userId = req.user._id;
 
-    // Validate targetUserId is a valid ObjectId
+    
     if (!mongoose.Types.ObjectId.isValid(targetUserId)) {
         return res.status(400).json({
             success: false,
@@ -36,7 +36,7 @@ chatRouter.get("/chat/:targetUserId", userAuth, async (req, res) => {
         });
 
         if (!chat) {
-            // Create a new chat
+            
             chat = new Chat({
                 participants: [currentUserObjectId, targetUserObjectId],
                 messages: [],
@@ -52,7 +52,7 @@ chatRouter.get("/chat/:targetUserId", userAuth, async (req, res) => {
                 });
         }
 
-        // Find the other user (the one we're chatting with)
+        // Find the other user
         const otherUser = chat.participants.find(
             participant => participant._id.toString() !== userId.toString()
         );
@@ -80,7 +80,7 @@ chatRouter.get("/chat/:targetUserId", userAuth, async (req, res) => {
     }
 });
 
-// Add this endpoint to get all chats for the current user
+
 chatRouter.get("/chats", userAuth, async (req, res) => {
     const userId = req.user._id;
 
@@ -121,7 +121,7 @@ chatRouter.get("/chats", userAuth, async (req, res) => {
                     senderName: lastMessage.senderId?.firstName,
                     timestamp: lastMessage.createdAt || chat.updatedAt
                 } : null,
-                unreadCount: 0, // You can implement unread count later
+                unreadCount: 0, 
                 updatedAt: chat.updatedAt,
                 messageCount: chat.messages.length
             };
