@@ -36,3 +36,9 @@ DevConnect Backend provides RESTful APIs to manage authentication, community int
 
 ---
 
+👨‍💻 Author
+
+Built with ❤️ by a developer passionate about creating scalable, production-ready backend systems.
+
+⭐ If you find this project useful, consider starring the repository!
+
