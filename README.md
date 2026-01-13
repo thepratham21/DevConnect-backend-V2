@@ -1,3 +1,7 @@
+![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Status](https://img.shields.io/badge/Status-In%20Development-yellow)
+
 # DevConnect Backend 🚀
 
 Backend service for **DevConnect**, a developer-focused social networking platform where users can connect, share posts, and collaborate.
