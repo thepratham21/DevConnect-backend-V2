@@ -42,3 +42,12 @@ Built with ❤️ by a developer passionate about creating scalable, production-
 
 ⭐ If you find this project useful, consider starring the repository!
 
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, and distribute this project for personal and commercial purposes, provided that the original copyright notice and license are included.
+
+See the `LICENSE` file for more details.
+
+
