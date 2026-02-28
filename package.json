@@ -1,7 +1,7 @@
 {
   "name": "devconnect-backend",
   "version": "1.0.0",
-  "description": "made by developer for developers",
+  "description": "Backend service for DevConnect",
   "keywords": [
     "node",
     "js",
@@ -28,6 +28,7 @@
     "mongoose": "^8.18.1",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
+    "nodemon": "^3.1.14",
     "razorpay": "^2.9.6",
     "sharp": "^0.34.5",
     "socket.io": "^4.8.1",

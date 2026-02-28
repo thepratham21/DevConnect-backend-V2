@@ -13,11 +13,8 @@ const app = express();
 
 app.use(cors({
     origin: [
-        "https://dev-connect-frontend-seven.vercel.app", // YOUR VERCEL URL
-        "https://devconnect-frontend.vercel.app",        // Keep this too
-        "https://devconnect.vercel.app",                 // Alternative
-        "https://devconnect-backend-v2.onrender.com",     // Backend itself
-        "http://localhost:5173",
+
+        "http://localhost:3000",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
